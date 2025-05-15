@@ -247,8 +247,8 @@ function clearSearchHistory() {
     }
 }
 
-// 历史面板相关函数
-function toggleHistory(e) {
+// 修改toggleHistory函数以支持导航栏
+const originalToggleHistory = function(e) {
     // 密码保护校验
     if (window.isPasswordProtected && window.isPasswordVerified) {
         if (window.isPasswordProtected() && !window.isPasswordVerified()) {
@@ -273,7 +273,43 @@ function toggleHistory(e) {
             settingsPanel.classList.remove('show');
         }
     }
+};
+
+// 确保历史和设置面板可以互相关闭
+function closeAllPanels() {
+    const historyPanel = document.getElementById('historyPanel');
+    const settingsPanel = document.getElementById('settingsPanel');
+    
+    if (historyPanel && historyPanel.classList.contains('show')) {
+        historyPanel.classList.remove('show');
+    }
+    
+    if (settingsPanel && settingsPanel.classList.contains('show')) {
+        settingsPanel.classList.remove('show');
+    }
 }
+
+// 覆盖toggleHistory函数
+toggleHistory = function(e) {
+    if (e) e.stopPropagation();
+    
+    // 先关闭设置面板
+    const settingsPanel = document.getElementById('settingsPanel');
+    if (settingsPanel && settingsPanel.classList.contains('show')) {
+        settingsPanel.classList.remove('show');
+    }
+    
+    // 原始历史面板切换逻辑
+    originalToggleHistory(e);
+    
+    // 更新导航栏状态
+    const historyPanel = document.getElementById('historyPanel');
+    if (historyPanel && historyPanel.classList.contains('show')) {
+        updateNavActiveState('nav-history');
+    } else {
+        updateNavActiveState('nav-home');
+    }
+};
 
 // 格式化时间戳为友好的日期时间格式
 function formatTimestamp(timestamp) {
@@ -590,24 +626,78 @@ function clearViewingHistory() {
     }
 }
 
-// 更新toggleSettings函数以处理历史面板互动
-const originalToggleSettings = toggleSettings;
+// 底部导航栏Active状态管理
+function updateNavActiveState(activeNavId) {
+    // 移除所有导航项的active类
+    document.querySelectorAll('.bottom-nav-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // 添加active类到当前激活的导航项
+    if (activeNavId) {
+        const activeBtn = document.getElementById(activeNavId);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+    }
+}
+
+// 修改toggleSettings函数以支持导航栏
+const originalToggleSettings = function(e) {
+    // 密码保护校验
+    if (window.isPasswordProtected && window.isPasswordVerified) {
+        if (window.isPasswordProtected() && !window.isPasswordVerified()) {
+            showPasswordModal && showPasswordModal();
+            return;
+        }
+    }
+    // 阻止事件冒泡，防止触发document的点击事件
+    e && e.stopPropagation();
+    const panel = document.getElementById('settingsPanel');
+    panel.classList.toggle('show');
+};
+
+// 覆盖toggleSettings函数
 toggleSettings = function(e) {
     if (e) e.stopPropagation();
     
-    // 原始设置面板切换逻辑
-    originalToggleSettings(e);
-    
-    // 如果历史记录面板是打开的，则关闭它
+    // 先关闭历史面板
     const historyPanel = document.getElementById('historyPanel');
     if (historyPanel && historyPanel.classList.contains('show')) {
         historyPanel.classList.remove('show');
     }
+    
+    // 原始设置面板切换逻辑
+    originalToggleSettings(e);
+    
+    // 更新导航栏状态
+    const settingsPanel = document.getElementById('settingsPanel');
+    if (settingsPanel && settingsPanel.classList.contains('show')) {
+        updateNavActiveState('nav-settings');
+    } else {
+        updateNavActiveState('nav-home');
+    }
 };
 
-// 点击外部关闭历史面板
+// 点击外部关闭面板
 document.addEventListener('DOMContentLoaded', function() {
+    // 初始状态下为home高亮
+    updateNavActiveState('nav-home');
+    
+    // 点击外部关闭设置面板
     document.addEventListener('click', function(e) {
+        const settingsPanel = document.getElementById('settingsPanel');
+        const settingsButton = document.querySelector('button[onclick="toggleSettings(event)"]');
+        
+        if (settingsPanel && settingsButton && 
+            !settingsPanel.contains(e.target) && 
+            !settingsButton.contains(e.target) && 
+            settingsPanel.classList.contains('show')) {
+            settingsPanel.classList.remove('show');
+            updateNavActiveState('nav-home');
+        }
+        
+        // 点击外部关闭历史面板
         const historyPanel = document.getElementById('historyPanel');
         const historyButton = document.querySelector('button[onclick="toggleHistory(event)"]');
         
@@ -616,8 +706,47 @@ document.addEventListener('DOMContentLoaded', function() {
             !historyButton.contains(e.target) && 
             historyPanel.classList.contains('show')) {
             historyPanel.classList.remove('show');
+            updateNavActiveState('nav-home');
         }
     });
+});
+
+// 修改search函数以支持底部导航栏
+const originalSearch = window.search;
+window.search = function() {
+    if (originalSearch) {
+        const result = originalSearch.apply(this, arguments);
+        
+        // 如果搜索后显示了结果区域，更新导航栏状态
+        setTimeout(() => {
+            const resultsArea = document.getElementById('resultsArea');
+            if (resultsArea && !resultsArea.classList.contains('hidden')) {
+                updateNavActiveState('nav-search');
+            }
+        }, 100);
+        
+        return result;
+    }
+};
+
+// 修改resetToHome函数以支持底部导航栏
+const originalResetToHome = window.resetToHome;
+window.resetToHome = function() {
+    if (originalResetToHome) {
+        const result = originalResetToHome.apply(this, arguments);
+        updateNavActiveState('nav-home');
+        
+        // 关闭所有面板
+        closeAllPanels();
+        
+        return result;
+    }
+};
+
+// 确保文档加载后更新导航状态
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始状态下为home高亮
+    updateNavActiveState('nav-home');
 });
 
 // 清除本地存储缓存并刷新页面

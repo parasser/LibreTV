@@ -35,25 +35,6 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="page-bg text-white">
-    <!-- 将历史记录按钮移到左上角，并缩小尺寸 -->
-    <div class="fixed top-4 left-4 z-10">
-        <button onclick="toggleHistory(event)" class="bg-[#222] hover:bg-[#333] border border-[#333] hover:border-white rounded-lg px-3 py-1.5 transition-colors" aria-label="观看历史">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-        </button>
-    </div>
-
-    <!-- 设置按钮保留在右上角，并缩小尺寸 -->
-    <div class="fixed top-4 right-4 z-10">
-        <button onclick="toggleSettings(event)" class="bg-[#222] hover:bg-[#333] border border-[#333] hover:border-white rounded-lg px-3 py-1.5 transition-colors" aria-label="打开设置">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
-        </button>
-    </div>
-    
     <!-- 历史记录面板 - 标题居中 -->
     <div id="historyPanel" class="history-panel fixed left-0 top-0 h-full bg-[#111] border-r border-[#333] p-6 z-40 transform -translate-x-full transition-transform duration-300" aria-label="观看历史" aria-hidden="true">
         <div class="flex justify-between items-center mb-6">
@@ -195,41 +176,28 @@
     <div class="container mx-auto px-4 py-8 flex flex-col h-screen">
         <div class="flex-1 flex flex-col">
             <!-- 网站标志和口号 -->
-            <header class="text-center mb-2">
-                <div class="flex justify-center items-center mb-4">
+            <header class="fixed top-0 left-0 right-0 h-11 flex items-center justify-center bg-[#0a0a0a] border-b border-[#333] z-30 shadow-md backdrop-blur-md">
+                <div class="flex items-center">
                     <a href="#" onclick="resetToHome(); return false;" class="flex items-center">
-                        <svg class="w-10 h-10 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                         </svg>
-                        <h1 class="text-5xl font-bold gradient-text">LibreTV</h1>
+                        <h1 class="text-2xl font-bold gradient-text">LibreTV</h1>
                     </a>
+                    <p class="text-gray-400 text-sm ml-2 hidden sm:block">自由观影，畅享精彩</p>
                 </div>
-                <p class="text-gray-400 mb-8">自由观影，畅享精彩</p>
             </header>
-            
 
-            <div id="searchArea" class="flex-1 flex flex-col items-center justify-center">
+            <div id="searchArea" class="flex-1 flex flex-col items-center justify-center pb-16">
                 <div class="w-full max-w-2xl">
                     <div class="flex items-stretch mb-3 h-14 shadow-lg rounded-lg overflow-hidden">
-                        <!-- 首页按钮 -->
-                        <button onclick="resetToHome()" 
-                                class="w-20 sm:w-24 flex items-center justify-center bg-white text-black font-medium hover:bg-gray-200 transition-colors" 
-                                aria-label="返回首页" title="返回首页">
-                            首页
-                        </button>
                         <!-- 搜索输入 -->
                         <input type="text" 
                                id="searchInput" 
-                               class="flex-1 bg-[#111] border-y border-[#333] text-white px-6 py-0 focus:outline-none transition-colors" 
+                               class="flex-1 bg-[#111] border border-[#333] text-white px-6 py-0 focus:outline-none transition-colors rounded-lg" 
                                placeholder="搜索你喜欢的视频..." 
                                autocomplete="off"
                                aria-label="视频搜索框">
-                        <!-- 搜索按钮 -->
-                        <button onclick="search()" 
-                                class="w-20 sm:w-24 flex items-center justify-center bg-white text-black font-medium hover:bg-gray-200 transition-colors" 
-                                aria-label="搜索按钮">
-                            搜索
-                        </button>
                     </div>
                     
                     <!-- 添加最近搜索记录部分 -->
@@ -240,7 +208,7 @@
             </div>
             
             <!-- 豆瓣热门推荐区域: 默认隐藏，现在位于搜索区域下方，调整宽度 -->
-            <div id="doubanArea" class="w-full my-8 hidden">
+            <div id="doubanArea" class="w-full my-8 hidden pb-16">
                 <div class="mx-auto max-w-screen-xl px-2">
                     <!-- 改进标题和标签区域布局 -->
                     <div class="mb-4">
@@ -273,7 +241,7 @@
             </div>
             
             <!-- 搜索结果：初始隐藏 -->
-            <div id="resultsArea" class="w-full hidden">
+            <div id="resultsArea" class="w-full hidden pb-16">
                 <div class="mx-auto max-w-7xl px-2"> <!-- 添加最大宽度限制并居中 -->
                     <div class="flex justify-end items-center mb-4">
                         <div class="text-sm text-gray-400">
@@ -289,8 +257,44 @@
         </div>
     </div>
 
+    <!-- 添加底部导航栏 -->
+    <nav class="fixed bottom-0 left-0 right-0 h-14 bg-[#0a0a0a] border-t border-[#333] flex justify-around items-center px-2 z-30 bottom-nav">
+        <!-- 首页按钮 -->
+        <button onclick="resetToHome()" class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button active" id="nav-home">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            <span>首页</span>
+        </button>
+        
+        <!-- 搜索按钮 -->
+        <button onclick="search()" class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button" id="nav-search">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <span>搜索</span>
+        </button>
+        
+        <!-- 历史记录按钮 -->
+        <button onclick="toggleHistory(event)" class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button" id="nav-history">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>历史</span>
+        </button>
+        
+        <!-- 设置按钮 -->
+        <button onclick="toggleSettings(event)" class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button" id="nav-settings">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span>设置</span>
+        </button>
+    </nav>
+
     <!-- 页脚区域 -->
-    <footer class="footer mt-8 py-6 border-t border-[#333] bg-[#0a0a0a]">
+    <footer class="footer mt-8 py-6 border-t border-[#333] bg-[#0a0a0a] pb-20">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="mb-4 md:mb-0">
@@ -439,24 +443,24 @@
     <!-- 弹窗显示脚本 -->
     <script>
         // 在页面加载完成后检查用户是否首次访问
-        document.addEventListener('DOMContentLoaded', function() {
-            // 检查用户是否已经看过声明
-            const hasSeenDisclaimer = localStorage.getItem('hasSeenDisclaimer');
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     // 检查用户是否已经看过声明
+        //     const hasSeenDisclaimer = localStorage.getItem('hasSeenDisclaimer');
             
-            if (!hasSeenDisclaimer) {
-                // 显示弹窗
-                const disclaimerModal = document.getElementById('disclaimerModal');
-                disclaimerModal.style.display = 'flex';
+        //     if (!hasSeenDisclaimer) {
+        //         // 显示弹窗
+        //         const disclaimerModal = document.getElementById('disclaimerModal');
+        //         disclaimerModal.style.display = 'flex';
                 
-                // 添加接受按钮事件
-                document.getElementById('acceptDisclaimerBtn').addEventListener('click', function() {
-                    // 保存用户已看过声明的状态
-                    localStorage.setItem('hasSeenDisclaimer', 'true');
-                    // 隐藏弹窗
-                    disclaimerModal.style.display = 'none';
-                });
-            }
-        });
+        //         // 添加接受按钮事件
+        //         document.getElementById('acceptDisclaimerBtn').addEventListener('click', function() {
+        //             // 保存用户已看过声明的状态
+        //             localStorage.setItem('hasSeenDisclaimer', 'true');
+        //             // 隐藏弹窗
+        //             disclaimerModal.style.display = 'none';
+        //         });
+        //     }
+        // });
     </script>
 </body>
 </html>

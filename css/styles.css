@@ -15,6 +15,14 @@
     --card-hover-border: rgba(0, 204, 255, 0.5); /* 悬停边框颜色 */
 }
 
+/* 固定顶部导航栏样式 */
+header.fixed {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(10, 10, 10, 0.95);
+}
+
 .page-bg {
     background: linear-gradient(180deg, var(--page-gradient-start), var(--page-gradient-end));
     min-height: 100vh;
@@ -189,6 +197,7 @@ body {
 
 .container {
     flex: 1;
+    padding-top: 60px; /* 为固定导航腾出空间 */
 }
 
 @media screen and (min-height: 800px) {
@@ -876,4 +885,55 @@ body {
 /* 优化卡片内元素间距 */
 .card-hover .p-2 {
     padding: 0.5rem;
+}
+
+/* 底部导航栏样式 */
+.bottom-nav {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(10, 10, 10, 0.95);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.bottom-nav-button {
+    position: relative;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0;
+}
+
+.bottom-nav-button:hover svg,
+.bottom-nav-button:hover span {
+    color: var(--primary-color);
+}
+
+.bottom-nav-button.active svg,
+.bottom-nav-button.active span {
+    color: var(--primary-color);
+}
+
+.bottom-nav-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    height: 3px;
+    border-radius: 1.5px;
+    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+}
+
+/* 适配底部导航栏的页面内容 */
+.pb-safe {
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0));
+}
+
+/* 修复一些移动端上的padding问题 */
+@media (max-width: 640px) {
+    .container {
+        padding-bottom: 4rem;
+    }
+    
+    .footer {
+        padding-bottom: 5rem;
+    }
 }
