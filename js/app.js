@@ -13,6 +13,8 @@ let episodesReversed = false;
 
 // 页面加载完成后的初始化
 document.addEventListener('DOMContentLoaded', function() {
+    // 在函数开头添加以下代码，确保豆瓣始终启用
+    localStorage.setItem('doubanEnabled', 'true');
     // 初始化API选择
     initAPISelection();
     

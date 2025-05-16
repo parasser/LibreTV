@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,12 @@
     <meta name="description" content="管理您的LibreTV设置，自定义视频源和内容过滤选项。">
     <meta name="keywords" content="设置,自定义,视频源,内容过滤,LibreTV">
     <meta name="author" content="LibreTV Team">
-    
+
     <!-- Favicon -->
     <link rel="icon" href="https://images.icon-icons.com/38/PNG/512/retrotv_5520.png">
     <link rel="apple-touch-icon" href="https://images.icon-icons.com/38/PNG/512/retrotv_5520.png">
     <link rel="manifest" href="manifest.json">
-    
+
     <script src="libs/tailwindcss.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <style>
@@ -20,7 +21,7 @@
         .settings-directory {
             width: 100%;
         }
-        
+
         .directory-item {
             display: flex;
             justify-content: space-between;
@@ -31,49 +32,49 @@
             margin-bottom: 10px;
             transition: all 0.2s ease;
         }
-        
+
         .directory-item:active {
             background-color: #222;
             transform: scale(0.98);
         }
-        
+
         .directory-item-left {
             display: flex;
             align-items: center;
         }
-        
+
         .directory-item-icon {
             width: 24px;
             height: 24px;
             margin-right: 15px;
             color: #8B5CF6;
         }
-        
+
         .directory-item-title {
             font-size: 16px;
             font-weight: 500;
             color: #f3f4f6;
         }
-        
+
         .directory-item-right svg {
             color: #666;
         }
-        
+
         .settings-section {
             display: none;
             animation: fadeIn 0.3s ease-in-out;
         }
-        
+
         .settings-section.active {
             display: block;
         }
-        
+
         .section-header {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
         }
-        
+
         .back-button {
             background: none;
             border: none;
@@ -84,36 +85,52 @@
             margin-right: 10px;
             cursor: pointer;
         }
-        
+
         .section-title {
             font-size: 1.2rem;
             font-weight: 600;
             color: #f3f4f6;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
-        
+
         @keyframes fadeOut {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(20px); }
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(20px);
+            }
         }
     </style>
 </head>
+
 <body class="page-bg text-white">
     <!-- 设置页面 -->
     <div id="settingsPage" class="flex-1 flex flex-col items-center justify-start pt-16 pb-16">
         <div class="w-full max-w-md px-4">
             <!-- <h2 class="text-2xl font-bold gradient-text mb-4 text-center">设置</h2> -->
-            
+
             <!-- 设置目录 -->
             <div id="settings-directory" class="settings-directory">
                 <div class="directory-item" data-target="data-source-section">
                     <div class="directory-item-left">
                         <svg class="directory-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                         </svg>
                         <span class="directory-item-title">数据源设置</span>
                     </div>
@@ -123,11 +140,12 @@
                         </svg>
                     </div>
                 </div>
-                
+
                 <div class="directory-item" data-target="custom-api-section">
                     <div class="directory-item-left">
                         <svg class="directory-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         <span class="directory-item-title">自定义API</span>
                     </div>
@@ -137,11 +155,12 @@
                         </svg>
                     </div>
                 </div>
-                
+
                 <div class="directory-item" data-target="feature-toggle-section">
                     <div class="directory-item-left">
                         <svg class="directory-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                         </svg>
                         <span class="directory-item-title">功能开关</span>
                     </div>
@@ -151,12 +170,14 @@
                         </svg>
                     </div>
                 </div>
-                
+
                 <div class="directory-item" data-target="general-section">
                     <div class="directory-item-left">
                         <svg class="directory-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         <span class="directory-item-title">一般功能</span>
                     </div>
@@ -166,11 +187,12 @@
                         </svg>
                     </div>
                 </div>
-                
+
                 <div class="directory-item" data-target="config-section">
                     <div class="directory-item-left">
                         <svg class="directory-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                         </svg>
                         <span class="directory-item-title">配置管理</span>
                     </div>
@@ -180,8 +202,23 @@
                         </svg>
                     </div>
                 </div>
+
+                <div class="directory-item" data-target="about-section">
+                    <div class="directory-item-left">
+                        <svg class="directory-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="directory-item-title">关于与声明</span>
+                    </div>
+                    <div class="directory-item-right">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </div>
             </div>
-            
+
             <!-- 设置内容区域 -->
             <div class="settings-content">
                 <!-- 数据源设置区域 -->
@@ -189,26 +226,30 @@
                     <div class="section-header">
                         <button class="back-button" onclick="showSettingsDirectory()">
                             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <h3 class="section-title">数据源设置</h3>
                     </div>
-                    
+
                     <!-- 批量操作按钮 -->
                     <div class="flex space-x-2 mb-3">
-                        <button onclick="selectAllAPIs(true)" class="px-2 py-1 bg-[#333] hover:bg-[#444] text-white text-xs rounded">全选</button>
-                        <button onclick="selectAllAPIs(false)" class="px-2 py-1 bg-[#333] hover:bg-[#444] text-white text-xs rounded">全不选</button>
-                        <button onclick="selectAllAPIs(true, true)" class="px-2 py-1 bg-[#333] hover:bg-[#444] text-white text-xs rounded">全选普通资源</button>
+                        <button onclick="selectAllAPIs(true)"
+                            class="px-2 py-1 bg-[#333] hover:bg-[#444] text-white text-xs rounded">全选</button>
+                        <button onclick="selectAllAPIs(false)"
+                            class="px-2 py-1 bg-[#333] hover:bg-[#444] text-white text-xs rounded">全不选</button>
+                        <button onclick="selectAllAPIs(true, true)"
+                            class="px-2 py-1 bg-[#333] hover:bg-[#444] text-white text-xs rounded">全选普通资源</button>
                     </div>
-                    
+
                     <!-- API选择区域 - 使用滚动区域 -->
                     <div class="max-h-60 overflow-y-auto bg-[#191919] p-2 rounded-lg mb-3">
                         <div id="apiCheckboxes">
                             <!-- 这里将动态插入API复选框 -->
                         </div>
                     </div>
-                    
+
                     <!-- API信息显示 -->
                     <div class="text-xs text-gray-500 flex justify-between items-center">
                         <span>已选API数量：<span id="selectedApiCount" class="text-white">0</span></span>
@@ -221,46 +262,56 @@
                     <div class="section-header">
                         <button class="back-button" onclick="showSettingsDirectory()">
                             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <h3 class="section-title">自定义API</h3>
                     </div>
-                    
+
                     <div class="flex justify-end mb-2">
-                        <button onclick="showAddCustomApiForm()" class="bg-[#333] hover:bg-[#444] text-white w-6 h-6 rounded-full text-center leading-none text-lg flex items-center justify-center">+</button>
+                        <button onclick="showAddCustomApiForm()"
+                            class="bg-[#333] hover:bg-[#444] text-white w-6 h-6 rounded-full text-center leading-none text-lg flex items-center justify-center">+</button>
                     </div>
                     <div id="customApisList" class="max-h-60 overflow-y-auto mb-2">
                         <!-- 自定义API将显示在这里 -->
                     </div>
-                    
+
                     <!-- 添加自定义API表单 (默认隐藏) -->
                     <div id="addCustomApiForm" class="hidden mt-2 p-2 bg-[#191919] rounded-lg">
-                        <input type="text" id="customApiName" placeholder="API名称" class="w-full bg-[#222] border border-[#333] text-white px-2 py-1 rounded mb-2" autocomplete="off">
-                        <input type="text" id="customApiUrl" placeholder="https://abc.com" class="w-full bg-[#222] border border-[#333] text-white px-2 py-1 rounded mb-2" autocomplete="off">
+                        <input type="text" id="customApiName" placeholder="API名称"
+                            class="w-full bg-[#222] border border-[#333] text-white px-2 py-1 rounded mb-2"
+                            autocomplete="off">
+                        <input type="text" id="customApiUrl" placeholder="https://abc.com"
+                            class="w-full bg-[#222] border border-[#333] text-white px-2 py-1 rounded mb-2"
+                            autocomplete="off">
                         <!-- 添加成人内容切换 -->
                         <div class="flex items-center mb-2">
-                            <input type="checkbox" id="customApiIsAdult" class="form-checkbox h-4 w-4 text-pink-500 bg-[#222] border border-[#333]">
+                            <input type="checkbox" id="customApiIsAdult"
+                                class="form-checkbox h-4 w-4 text-pink-500 bg-[#222] border border-[#333]">
                             <label for="customApiIsAdult" class="ml-2 text-xs text-pink-400">黄色资源站</label>
                         </div>
                         <div class="flex space-x-2">
-                            <button onclick="addCustomApi()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs">添加</button>
-                            <button onclick="cancelAddCustomApi()" class="bg-[#444] hover:bg-[#555] text-white px-3 py-1 rounded text-xs">取消</button>
+                            <button onclick="addCustomApi()"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs">添加</button>
+                            <button onclick="cancelAddCustomApi()"
+                                class="bg-[#444] hover:bg-[#555] text-white px-3 py-1 rounded text-xs">取消</button>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- 内容过滤设置区域 -->
                 <div id="feature-toggle-section" class="settings-section p-4 bg-[#151515] rounded-lg shadow-inner">
                     <div class="section-header">
                         <button class="back-button" onclick="showSettingsDirectory()">
                             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <h3 class="section-title">功能开关</h3>
                     </div>
-                    
+
                     <!-- 黄色内容过滤开关 -->
                     <div class="flex flex-col mb-3 pb-3 border-b border-[#222] relative">
                         <div class="flex items-center justify-between">
@@ -269,14 +320,19 @@
                                 <p class="text-xs text-gray-500 mt-1 filter-description">过滤"伦理片"等黄色内容</p>
                             </div>
                             <div class="relative inline-block w-12 align-middle select-none">
-                                <input type="checkbox" id="yellowFilterToggle" class="opacity-0 absolute w-full h-full cursor-pointer z-10">
-                                <div class="toggle-bg bg-[#333] w-12 h-6 rounded-full transition-colors duration-300 ease-in-out"></div>
-                                <div class="toggle-dot absolute w-5 h-5 bg-white rounded-full top-0.5 left-0.5 transition-transform duration-300 ease-in-out"></div>
+                                <input type="checkbox" id="yellowFilterToggle"
+                                    class="opacity-0 absolute w-full h-full cursor-pointer z-10">
+                                <div
+                                    class="toggle-bg bg-[#333] w-12 h-6 rounded-full transition-colors duration-300 ease-in-out">
+                                </div>
+                                <div
+                                    class="toggle-dot absolute w-5 h-5 bg-white rounded-full top-0.5 left-0.5 transition-transform duration-300 ease-in-out">
+                                </div>
                             </div>
                         </div>
                         <!-- 警告提示将在这里动态插入 -->
                     </div>
-                    
+
                     <!-- 广告过滤开关 -->
                     <div class="flex items-center justify-between mb-3 pb-3 border-b border-[#222]">
                         <div>
@@ -284,12 +340,17 @@
                             <p class="text-xs text-gray-500 mt-1">关闭可减少旧版浏览器卡顿</p>
                         </div>
                         <div class="relative inline-block w-12 align-middle select-none">
-                            <input type="checkbox" id="adFilterToggle" class="opacity-0 absolute w-full h-full cursor-pointer z-10">
-                            <div class="toggle-bg bg-[#333] w-12 h-6 rounded-full transition-colors duration-300 ease-in-out"></div>
-                            <div class="toggle-dot absolute w-5 h-5 bg-white rounded-full top-0.5 left-0.5 transition-transform duration-300 ease-in-out"></div>
+                            <input type="checkbox" id="adFilterToggle"
+                                class="opacity-0 absolute w-full h-full cursor-pointer z-10">
+                            <div
+                                class="toggle-bg bg-[#333] w-12 h-6 rounded-full transition-colors duration-300 ease-in-out">
+                            </div>
+                            <div
+                                class="toggle-dot absolute w-5 h-5 bg-white rounded-full top-0.5 left-0.5 transition-transform duration-300 ease-in-out">
+                            </div>
                         </div>
                     </div>
-                    
+
                     <!-- 豆瓣热门开关 -->
                     <div class="flex items-center justify-between">
                         <div>
@@ -297,9 +358,14 @@
                             <p class="text-xs text-gray-500 mt-1">首页显示豆瓣热门影视内容</p>
                         </div>
                         <div class="relative inline-block w-12 align-middle select-none">
-                            <input type="checkbox" id="doubanToggle" class="opacity-0 absolute w-full h-full cursor-pointer z-10">
-                            <div class="toggle-bg bg-[#333] w-12 h-6 rounded-full transition-colors duration-300 ease-in-out"></div>
-                            <div class="toggle-dot absolute w-5 h-5 bg-white rounded-full top-0.5 left-0.5 transition-transform duration-300 ease-in-out"></div>
+                            <input type="checkbox" id="doubanToggle"
+                                class="opacity-0 absolute w-full h-full cursor-pointer z-10">
+                            <div
+                                class="toggle-bg bg-[#333] w-12 h-6 rounded-full transition-colors duration-300 ease-in-out">
+                            </div>
+                            <div
+                                class="toggle-dot absolute w-5 h-5 bg-white rounded-full top-0.5 left-0.5 transition-transform duration-300 ease-in-out">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -309,13 +375,15 @@
                     <div class="section-header">
                         <button class="back-button" onclick="showSettingsDirectory()">
                             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <h3 class="section-title">一般功能</h3>
                     </div>
-                    
-                    <button onclick="clearLocalStorage()" class="px-4 py-2 mt-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg">清除页面缓存</button>
+
+                    <button onclick="clearLocalStorage()"
+                        class="px-4 py-2 mt-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg">清除页面缓存</button>
                 </div>
 
                 <!-- 导入导出配置区域 -->
@@ -323,25 +391,80 @@
                     <div class="section-header">
                         <button class="back-button" onclick="showSettingsDirectory()">
                             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <h3 class="section-title">配置管理</h3>
                     </div>
+
+                    <button onclick="importConfig()"
+                        class="px-4 py-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg">导入配置</button>
+                    <button onclick="exportConfig()"
+                        class="px-4 py-2 mt-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg">导出配置</button>
+                </div>
+
+                <!-- 关于与声明区域 -->
+                <div id="about-section" class="settings-section p-4 bg-[#151515] rounded-lg shadow-inner">
+                    <div class="section-header">
+                        <button class="back-button" onclick="showSettingsDirectory()">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <h3 class="section-title">关于与声明</h3>
+                    </div>
                     
-                    <button onclick="importConfig()" class="px-4 py-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg">导入配置</button>
-                    <button onclick="exportConfig()" class="px-4 py-2 mt-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg">导出配置</button>
+                    <!-- 版权信息 -->
+                    <div class="mb-6 p-4 bg-[#191919] rounded-lg">
+                        <div class="flex items-center justify-center mb-3">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="gradient-text font-bold">LibreTV</span>
+                        </div>
+                        <p class="text-gray-400 text-sm text-center">© 2025 LibreTV - 自由观影，畅享精彩</p>
+                    </div>
+                    
+                    <!-- 免责声明 -->
+                    <div class="mb-6 p-4 bg-[#191919] rounded-lg">
+                        <h4 class="text-white font-medium mb-3">免责声明</h4>
+                        <p class="text-gray-400 text-sm mb-3">
+                            本站仅为视频搜索工具，不存储、上传或分发任何视频内容。
+                            所有视频均来自第三方API接口。如有侵权，请联系相关内容提供方。
+                        </p>
+                    </div>
+                    
+                    <!-- 链接区域 -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="about.html" class="p-4 bg-[#191919] rounded-lg flex items-center justify-center hover:bg-[#222] transition-colors">
+                            <span class="text-gray-300 text-sm">关于我们</span>
+                        </a>
+                        <a href="privacy.html" class="p-4 bg-[#191919] rounded-lg flex items-center justify-center hover:bg-[#222] transition-colors">
+                            <span class="text-gray-300 text-sm">隐私政策</span>
+                        </a>
+                    </div>
+                    
+                    <!-- 版本信息 -->
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-500 text-xs">版本：<span id="app-version">${SITE_CONFIG.version || '1.0.0'}</span></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 网站标志和口号 -->
-    <header class="fixed top-0 left-0 right-0 h-11 flex items-center justify-center bg-[#0a0a0a] border-b border-[#333] z-30 shadow-md backdrop-blur-md">
+    <header
+        class="fixed top-0 left-0 right-0 h-11 flex items-center justify-center bg-[#0a0a0a] border-b border-[#333] z-30 shadow-md backdrop-blur-md">
         <div class="flex items-center">
             <a href="index.html" class="flex items-center">
                 <svg class="w-6 h-6 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                    </path>
                 </svg>
                 <h1 class="text-2xl font-bold gradient-text">LibreTV</h1>
             </a>
@@ -350,36 +473,51 @@
     </header>
 
     <!-- 添加底部导航栏 -->
-    <nav class="fixed bottom-0 left-0 right-0 h-14 bg-[#0a0a0a] border-t border-[#333] flex justify-around items-center px-2 z-30 bottom-nav">
+    <nav
+        class="fixed bottom-0 left-0 right-0 h-14 bg-[#0a0a0a] border-t border-[#333] flex justify-around items-center px-2 z-30 bottom-nav">
         <!-- 首页按钮 -->
-        <a href="index.html" class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button" id="nav-home">
+        <a href="index.html"
+            class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button" id="nav-home">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                </path>
             </svg>
             <span>首页</span>
         </a>
-        
+
         <!-- 搜索按钮 -->
-        <a href="search.html" class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button" id="nav-search">
+        <a href="search.html"
+            class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button"
+            id="nav-search">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
             <span>搜索</span>
         </a>
-        
+
         <!-- 历史记录按钮 -->
-        <a href="history.html" class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button" id="nav-history">
+        <a href="history.html"
+            class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button"
+            id="nav-history">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <span>历史</span>
         </a>
-        
+
         <!-- 设置按钮 -->
-        <a href="settings.html" class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button active" id="nav-settings">
+        <a href="settings.html"
+            class="flex flex-col items-center justify-center w-1/4 text-white text-xs bottom-nav-button active"
+            id="nav-settings">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                </path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
             <span>设置</span>
         </a>
@@ -394,7 +532,8 @@
     </div>
 
     <!-- 错误提示框 -->
-    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 opacity-0 -translate-y-full">
+    <div id="toast"
+        class="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 opacity-0 -translate-y-full">
         <p id="toastMessage"></p>
     </div>
 
@@ -411,29 +550,29 @@
     <script src="js/app.js"></script>
 
     <script>
-        // 初始化设置导航
+        // 初始化设置目录
         function initSettingsDirectory() {
             // 初始状态只显示目录，隐藏所有设置内容
             document.querySelectorAll('.settings-section').forEach(section => {
                 section.classList.remove('active');
             });
-            
+
             // 为目录项添加点击事件
             document.querySelectorAll('.directory-item').forEach(item => {
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function () {
                     const targetId = this.getAttribute('data-target');
                     const targetSection = document.getElementById(targetId);
-                    
+
                     // 隐藏目录
                     document.getElementById('settings-directory').style.display = 'none';
-                    
+
                     // 显示目标设置区域
                     if (targetSection) {
                         targetSection.classList.add('active');
                     }
                 });
             });
-            
+
             // 支持通过URL参数直接导航到特定设置部分
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -448,50 +587,59 @@
                 console.error('解析URL参数失败:', e);
             }
         }
-        
+
         // 显示设置目录
         function showSettingsDirectory() {
             // 隐藏所有设置区域
             document.querySelectorAll('.settings-section').forEach(section => {
                 section.classList.remove('active');
             });
-            
+
             // 显示目录
             document.getElementById('settings-directory').style.display = 'block';
         }
-        
+
         // 页面加载完成后初始化设置页面
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // 初始化API选择
             initAPISelection();
-            
+
             // 初始化事件监听器
             initEventListeners();
-            
+
             // 设置导航栏状态
             document.querySelectorAll('.bottom-nav-button').forEach(btn => btn.classList.remove('active'));
             document.getElementById('nav-settings').classList.add('active');
-            
+
             // 检查密码保护状态
             if (typeof safeCheckPasswordProtection === 'function') {
                 safeCheckPasswordProtection();
             } else if (typeof checkPasswordProtection === 'function') {
                 checkPasswordProtection();
             }
-            
-            // 设置豆瓣开关初始状态
+
             const doubanToggle = document.getElementById('doubanToggle');
             if (doubanToggle) {
-                doubanToggle.checked = localStorage.getItem('doubanEnabled') === 'true';
+                doubanToggle.checked = true;
+                localStorage.setItem('doubanEnabled', 'true');
             }
-            
-            // 绑定豆瓣开关事件
-            doubanToggle.addEventListener('change', function(e) {
-                localStorage.setItem('doubanEnabled', e.target.checked);
+
+            // 绑定豆瓣开关事件 - 确保始终为true
+            doubanToggle.addEventListener('change', function (e) {
+                // 无论用户如何切换，都设置为true
+                localStorage.setItem('doubanEnabled', 'true');
+                // 如果用户尝试关闭，自动切回开启状态
+                if (!e.target.checked) {
+                    setTimeout(() => {
+                        doubanToggle.checked = true;
+                    }, 100);
+                }
             });
             
-            // 初始化设置目录
-            initSettingsDirectory();
+            // 使用延迟初始化设置目录，确保DOM元素完全加载
+            setTimeout(() => {
+                initSettingsDirectory();
+            }, 300);
         });
     </script>
 
@@ -509,4 +657,5 @@
         }
     </script>
 </body>
-</html> 
+
+</html>
