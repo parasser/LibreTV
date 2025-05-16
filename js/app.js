@@ -663,35 +663,14 @@ async function search() {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 8000);
                 
-                let response;
-                try {
-                    // 首先尝试使用配置的代理
-                    response = await fetch(PROXY_URL + encodeURIComponent(apiUrl), {
-                        headers: API_CONFIG.search.headers,
-                        signal: controller.signal
-                    });
-                } catch (fetchError) {
-                    console.warn(`使用主代理请求失败: ${apiUrl}`, fetchError);
-                    
-                    // 如果主代理失败，尝试使用备用代理
-                    try {
-                        const backupProxyUrl = 'https://api.allorigins.win/raw?url=';
-                        response = await fetch(backupProxyUrl + encodeURIComponent(apiUrl), {
-                            headers: API_CONFIG.search.headers,
-                            signal: controller.signal
-                        });
-                        console.log(`使用备用代理成功: ${apiUrl}`);
-                    } catch (backupError) {
-                        console.error(`所有代理请求都失败: ${apiUrl}`, backupError);
-                        clearTimeout(timeoutId);
-                        return []; // 返回空结果
-                    }
-                }
+                const response = await fetch(PROXY_URL + encodeURIComponent(apiUrl), {
+                    headers: API_CONFIG.search.headers,
+                    signal: controller.signal
+                });
                 
                 clearTimeout(timeoutId);
                 
                 if (!response.ok) {
-                    console.warn(`API响应错误: ${apiUrl}, 状态码: ${response.status}`);
                     return [];
                 }
                 

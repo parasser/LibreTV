@@ -179,10 +179,7 @@ function fillAndSearch(title) {
 
 // 填充搜索框，确保豆瓣资源API被选中，然后执行搜索
 function fillAndSearchWithDouban(title) {
-    if (!title) {
-        showToast('影片标题为空，无法搜索', 'error');
-        return;
-    }
+    if (!title) return;
     
     // 安全处理标题，防止XSS
     const safeTitle = title
@@ -191,67 +188,36 @@ function fillAndSearchWithDouban(title) {
         .replace(/"/g, '&quot;');
     
     // 确保豆瓣资源API被选中
-    if (typeof selectedAPIs !== 'undefined') {
-        // 检查是否有可用的API
-        if (selectedAPIs.length === 0) {
-            showToast('请先在设置页面选择至少一个API源', 'warning');
-            return;
-        }
-        
-        // 尝试选择豆瓣资源API（如果可用）
-        if (!selectedAPIs.includes('dbzy')) {
-            // 在设置中勾选豆瓣资源API复选框
-            const doubanCheckbox = document.querySelector('input[id="api_dbzy"]');
-            if (doubanCheckbox) {
-                doubanCheckbox.checked = true;
+    if (typeof selectedAPIs !== 'undefined' && !selectedAPIs.includes('dbzy')) {
+        // 在设置中勾选豆瓣资源API复选框
+        const doubanCheckbox = document.querySelector('input[id="api_dbzy"]');
+        if (doubanCheckbox) {
+            doubanCheckbox.checked = true;
+            
+            // 触发updateSelectedAPIs函数以更新状态
+            if (typeof updateSelectedAPIs === 'function') {
+                updateSelectedAPIs();
+            } else {
+                // 如果函数不可用，则手动添加到selectedAPIs
+                selectedAPIs.push('dbzy');
+                localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
                 
-                // 触发updateSelectedAPIs函数以更新状态
-                if (typeof updateSelectedAPIs === 'function') {
-                    updateSelectedAPIs();
-                } else {
-                    // 如果函数不可用，则手动添加到selectedAPIs
-                    selectedAPIs.push('dbzy');
-                    localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
-                    
-                    // 更新选中API计数（如果有这个元素）
-                    const countEl = document.getElementById('selectedAPICount');
-                    if (countEl) {
-                        countEl.textContent = selectedAPIs.length;
-                    }
+                // 更新选中API计数（如果有这个元素）
+                const countEl = document.getElementById('selectedAPICount');
+                if (countEl) {
+                    countEl.textContent = selectedAPIs.length;
                 }
-                
-                showToast('已自动选择豆瓣资源API', 'info');
             }
+            
+            showToast('已自动选择豆瓣资源API', 'info');
         }
-    } else {
-        showToast('API选择功能不可用，请刷新页面重试', 'error');
-        return;
     }
     
     // 填充搜索框并执行搜索
     const input = document.getElementById('searchInput');
     if (input) {
         input.value = safeTitle;
-        
-        try {
-            // 显示正在搜索的提示
-            showToast(`正在搜索: ${safeTitle}`, 'info');
-            
-            // 检查search函数是否可用
-            if (typeof search === 'function') {
-                // 使用已有的search函数执行搜索
-                search();
-            } else {
-                // 如果search函数不可用，则尝试重定向到搜索页
-                window.location.href = `search.html?q=${encodeURIComponent(safeTitle)}`;
-                showToast('正在跳转到搜索页...', 'info');
-            }
-        } catch (error) {
-            console.error('执行搜索时出错:', error);
-            showToast('搜索失败，请尝试手动搜索或检查网络连接', 'error');
-        }
-    } else {
-        showToast('搜索框不可用，请尝试刷新页面', 'error');
+        search(); // 使用已有的search函数执行搜索
     }
 }
 
