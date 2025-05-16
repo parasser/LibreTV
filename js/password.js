@@ -178,5 +178,12 @@ function initPasswordProtection() {
     }
 }
 
+/**
+ * 为了兼容现有代码，添加checkPasswordProtection作为initPasswordProtection的别名
+ */
+function checkPasswordProtection() {
+    return initPasswordProtection();
+}
+
 // 在页面加载完成后初始化密码保护
 document.addEventListener('DOMContentLoaded', initPasswordProtection);

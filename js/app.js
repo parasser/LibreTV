@@ -11,59 +11,57 @@ let currentVideoTitle = '';
 // 全局变量用于倒序状态
 let episodesReversed = false;
 
-// 页面初始化
+// 页面加载完成后的初始化
 document.addEventListener('DOMContentLoaded', function() {
-    // 初始化API复选框
-    initAPICheckboxes();
+    // 初始化API选择
+    initAPISelection();
     
-    // 初始化自定义API列表
-    renderCustomAPIsList();
+    // 初始化事件监听器
+    initEventListeners();
     
-    // 初始化显示选中的API数量
-    updateSelectedApiCount();
-    
-    // 渲染搜索历史
-    renderSearchHistory();
-    
-    // 设置默认API选择（如果是第一次加载）
-    if (!localStorage.getItem('hasInitializedDefaults')) {
-        // 仅选择天涯资源、暴风资源和如意资源
-        selectedAPIs = ["tyyszy", "bfzy", "ruyi"];
-        localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
-        
-        // 默认选中过滤开关
-        localStorage.setItem('yellowFilterEnabled', 'true');
-        localStorage.setItem(PLAYER_CONFIG.adFilteringStorage, 'true');
-        
-        // 默认启用豆瓣功能
-        localStorage.setItem('doubanEnabled', 'true');
-
-        // 标记已初始化默认值
-        localStorage.setItem('hasInitializedDefaults', 'true');
+    // 加载豆瓣热门数据（如果启用）- 只在index.html页面执行
+    if (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/')) {
+        const doubanEnabled = localStorage.getItem('doubanEnabled') === 'true';
+        if (doubanEnabled) {
+            // 检查loadDoubanData函数是否存在
+            if (typeof loadDoubanData === 'function') {
+                loadDoubanData();
+            } else {
+                console.error('loadDoubanData函数未定义，请确保douban.js正确加载');
+            }
+        }
     }
     
-    // 设置黄色内容过滤开关初始状态
-    const yellowFilterToggle = document.getElementById('yellowFilterToggle');
-    if (yellowFilterToggle) {
-        yellowFilterToggle.checked = localStorage.getItem('yellowFilterEnabled') === 'true';
-    }
+    // 检查密码保护状态
+    safeCheckPasswordProtection();
     
-    // 设置广告过滤开关初始状态
-    const adFilterToggle = document.getElementById('adFilterToggle');
-    if (adFilterToggle) {
-        adFilterToggle.checked = localStorage.getItem(PLAYER_CONFIG.adFilteringStorage) !== 'false'; // 默认为true
-    }
-    
-    // 设置事件监听器
-    setupEventListeners();
-    
-    // 初始检查成人API选中状态
-    setTimeout(checkAdultAPIsSelected, 100);
+    // 初始化搜索框事件
+    initSearchInput();
 });
+
+// 添加一个辅助函数来安全地调用checkPasswordProtection
+function safeCheckPasswordProtection() {
+    if (typeof checkPasswordProtection === 'function') {
+        checkPasswordProtection();
+    } else {
+        console.error('checkPasswordProtection函数未定义，请确保password.js正确加载');
+    }
+}
+
+// 添加一个辅助函数来安全地调用renderSearchHistory
+function safeRenderSearchHistory() {
+    if (typeof renderSearchHistory === 'function') {
+        renderSearchHistory();
+    } else {
+        console.error('renderSearchHistory函数未定义，请确保相关JavaScript文件正确加载');
+    }
+}
 
 // 初始化API复选框
 function initAPICheckboxes() {
     const container = document.getElementById('apiCheckboxes');
+    if (!container) return; // 如果容器不存在则直接返回
+    
     container.innerHTML = '';
 
     // 添加普通API组标题
@@ -113,6 +111,7 @@ function addAdultAPI() {
     // 仅在隐藏设置为false时添加成人API组
     if (!HIDE_BUILTIN_ADULT_APIS && (localStorage.getItem('yellowFilterEnabled') === 'false')) {
         const container = document.getElementById('apiCheckboxes');
+        if (!container) return; // 如果容器不存在则直接返回
 
         // 添加成人API组标题
         const adultdiv = document.createElement('div');
@@ -166,8 +165,13 @@ function checkAdultAPIsSelected() {
     const hasAdultSelected = adultBuiltinCheckboxes.length > 0 || customApiCheckboxes.length > 0;
     
     const yellowFilterToggle = document.getElementById('yellowFilterToggle');
-    const yellowFilterContainer = yellowFilterToggle.closest('div').parentNode;
+    if (!yellowFilterToggle) return; // 如果黄色内容过滤器不存在则直接返回
+    
+    const yellowFilterContainer = yellowFilterToggle.closest('div')?.parentNode;
+    if (!yellowFilterContainer) return; // 如果黄色内容过滤器容器不存在则直接返回
+    
     const filterDescription = yellowFilterContainer.querySelector('p.filter-description');
+    if (!filterDescription) return; // 如果黄色内容过滤器描述不存在则直接返回
     
     // 如果选择了成人API，禁用黄色内容过滤器
     if (hasAdultSelected) {
@@ -179,9 +183,7 @@ function checkAdultAPIsSelected() {
         yellowFilterContainer.classList.add('filter-disabled');
         
         // 修改描述文字
-        if (filterDescription) {
             filterDescription.innerHTML = '<strong class="text-pink-300">选中黄色资源站时无法启用此过滤</strong>';
-        }
         
         // 移除提示信息（如果存在）
         const existingTooltip = yellowFilterContainer.querySelector('.filter-tooltip');
@@ -523,21 +525,14 @@ function removeCustomApi(index) {
 // 设置事件监听器
 function setupEventListeners() {
     // 回车搜索
-    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             search();
         }
     });
-
-    // 点击外部关闭设置面板
-    document.addEventListener('click', function(e) {
-        const panel = document.getElementById('settingsPanel');
-        const settingsButton = document.querySelector('button[onclick="toggleSettings(event)"]');
-        
-        if (!panel.contains(e.target) && !settingsButton.contains(e.target) && panel.classList.contains('show')) {
-            panel.classList.remove('show');
-        }
-    });
+    }
     
     // 黄色内容过滤开关事件绑定
     const yellowFilterToggle = document.getElementById('yellowFilterToggle');
@@ -571,25 +566,40 @@ function setupEventListeners() {
 
 // 重置搜索区域
 function resetSearchArea() {
-    // 清理搜索结果
-    document.getElementById('results').innerHTML = '';
-    document.getElementById('searchInput').value = '';
+    // 清空搜索结果
+    clearSearchResults();
     
-    // 恢复搜索区域的样式
-    document.getElementById('searchArea').classList.add('flex-1');
-    document.getElementById('searchArea').classList.remove('mb-8');
-    document.getElementById('resultsArea').classList.add('hidden');
+    // 如果不在首页，则跳转到首页
+    if (!window.location.pathname.endsWith('index.html') && !window.location.pathname.endsWith('/')) {
+        window.location.href = 'index.html';
+        return;
+    }
     
-    // 确保页脚正确显示，移除相对定位
+    // 隐藏搜索页面和结果区域
+    const searchPage = document.getElementById('searchPage');
+    if (searchPage) searchPage.classList.add('hidden');
+    
+    const resultsArea = document.getElementById('resultsArea');
+    if (resultsArea) resultsArea.classList.add('hidden');
+    
+    // 显示主页
+    const homeArea = document.getElementById('homeArea');
+    if (homeArea) homeArea.classList.remove('hidden');
+    
+    // 检查是否启用豆瓣功能
+    const doubanEnabled = localStorage.getItem('doubanEnabled') === 'true';
+    if (doubanEnabled) {
+        const doubanArea = document.getElementById('doubanArea');
+        if (doubanArea) doubanArea.classList.remove('hidden');
+    }
+    
+    // 恢复footer
     const footer = document.querySelector('.footer');
-    if (footer) {
-        footer.style.position = '';
-    }
+    if (footer) footer.style.position = '';
     
-    // 如果有豆瓣功能，检查是否需要显示豆瓣推荐区域
-    if (typeof updateDoubanVisibility === 'function') {
-        updateDoubanVisibility();
-    }
+    // 更新导航栏状态
+    document.querySelectorAll('.bottom-nav-button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('nav-home').classList.add('active');
 }
 
 // 获取自定义API信息
@@ -702,9 +712,16 @@ async function search() {
         }
         
         // 显示结果区域，调整搜索区域
-        document.getElementById('searchArea').classList.remove('flex-1');
-        document.getElementById('searchArea').classList.add('mb-8');
-        document.getElementById('resultsArea').classList.remove('hidden');
+        const searchPage = document.getElementById('searchPage');
+        if (searchPage) {
+            searchPage.classList.remove('flex-1');
+            searchPage.classList.add('mb-8');
+        }
+        
+        const resultsArea = document.getElementById('resultsArea');
+        if (resultsArea) {
+            resultsArea.classList.remove('hidden');
+        }
         
         // 隐藏豆瓣推荐区域（如果存在）
         const doubanArea = document.getElementById('doubanArea');
@@ -1114,14 +1131,367 @@ function saveStringAsFile(content, fileName) {
     window.URL.revokeObjectURL(url);
 }
 
-// app.js 或路由文件中
-const authMiddleware = require('./middleware/auth');
-const config = require('./config');
+// 初始化API选择
+function initAPISelection() {
+    // 初始化API复选框
+    initAPICheckboxes();
+    
+    // 初始化自定义API列表
+    renderCustomAPIsList();
+    
+    // 初始化显示选中的API数量
+    updateSelectedApiCount();
+    
+    // 设置默认API选择（如果是第一次加载）
+    if (!localStorage.getItem('hasInitializedDefaults')) {
+        // 仅选择天涯资源、暴风资源和如意资源
+        selectedAPIs = ["tyyszy", "bfzy", "ruyi"];
+        localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
+        
+        // 默认选中过滤开关
+        localStorage.setItem('yellowFilterEnabled', 'true');
+        localStorage.setItem(PLAYER_CONFIG.adFilteringStorage, 'true');
+        
+        // 默认启用豆瓣功能
+        localStorage.setItem('doubanEnabled', 'true');
 
-// 对所有请求启用鉴权（按需调整作用范围）
-if (config.auth.enabled) {
-  app.use(authMiddleware);
+        // 标记已初始化默认值
+        localStorage.setItem('hasInitializedDefaults', 'true');
+    }
+    
+    // 设置黄色内容过滤开关初始状态
+    const yellowFilterToggle = document.getElementById('yellowFilterToggle');
+    if (yellowFilterToggle) {
+        yellowFilterToggle.checked = localStorage.getItem('yellowFilterEnabled') === 'true';
+    }
+    
+    // 设置广告过滤开关初始状态
+    const adFilterToggle = document.getElementById('adFilterToggle');
+    if (adFilterToggle) {
+        adFilterToggle.checked = localStorage.getItem(PLAYER_CONFIG.adFilteringStorage) !== 'false'; // 默认为true
+    }
+    
+    // 初始检查成人API选中状态
+    setTimeout(checkAdultAPIsSelected, 100);
 }
 
-// 或者针对特定路由
-app.use('/api', authMiddleware);
+// 初始化事件监听器
+function initEventListeners() {
+    // 设置事件监听器
+    setupEventListeners();
+    
+    // 渲染搜索历史（只在存在历史记录容器的页面上调用）
+    if (document.getElementById('searchHistoryList') || document.getElementById('viewingHistoryList')) {
+        safeRenderSearchHistory();
+    }
+    
+    // 设置豆瓣开关初始状态
+    const doubanToggle = document.getElementById('doubanToggle');
+    if (doubanToggle) {
+        doubanToggle.checked = localStorage.getItem('doubanEnabled') === 'true';
+    }
+}
+
+// 初始化搜索框事件
+function initSearchInput() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        // 添加回车键搜索功能
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                search();
+            }
+        });
+    }
+}
+
+// 显示主页
+function showHomePage() {
+    // 隐藏其他页面
+    hideAllPages();
+    
+    // 显示主页
+    const homeArea = document.getElementById('homeArea');
+    if (homeArea) homeArea.classList.remove('hidden');
+    
+    // 检查是否启用豆瓣功能
+    const doubanEnabled = localStorage.getItem('doubanEnabled') === 'true';
+    if (doubanEnabled) {
+        const doubanArea = document.getElementById('doubanArea');
+        if (doubanArea) doubanArea.classList.remove('hidden');
+    }
+    
+    // 更新导航栏状态
+    updateNavState('home');
+}
+
+// 显示搜索页面
+function showSearchPage() {
+    // 隐藏其他页面
+    hideAllPages();
+    
+    // 显示搜索页面
+    const searchPage = document.getElementById('searchPage');
+    if (searchPage) searchPage.classList.remove('hidden');
+    
+    // 更新导航栏状态
+    updateNavState('search');
+    
+    // 聚焦搜索框
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        setTimeout(() => {
+            searchInput.focus();
+        }, 100);
+    }
+}
+
+// 显示历史记录页面
+function showHistoryPage() {
+    // 隐藏其他页面
+    hideAllPages();
+    
+    // 显示历史记录页面
+    const historyPage = document.getElementById('historyPage');
+    if (historyPage) historyPage.classList.remove('hidden');
+    
+    // 更新导航栏状态
+    updateNavState('history');
+    
+    // 检查historyList元素是否存在
+    const historyList = document.getElementById('historyList');
+    if (!historyList) {
+        console.error('historyList元素不存在，无法渲染观看历史');
+        return;
+    }
+    
+    // 渲染历史记录（如果函数存在）
+    if (typeof renderViewingHistory === 'function') {
+        renderViewingHistory();
+    } else {
+        console.error('renderViewingHistory函数未定义，尝试使用renderSearchHistory函数');
+        // 尝试使用renderSearchHistory作为备选
+        safeRenderSearchHistory();
+    }
+}
+
+// 渲染观看历史记录
+function renderViewingHistory() {
+    const historyList = document.getElementById('historyList');
+    if (!historyList) {
+        console.error('historyList元素不存在，无法渲染观看历史');
+        return;
+    }
+    
+    // 获取历史记录
+    const viewingHistory = JSON.parse(localStorage.getItem('viewingHistory') || '[]');
+    
+    // 如果没有历史记录
+    if (viewingHistory.length === 0) {
+        historyList.innerHTML = '<div class="text-center py-8 text-gray-500">暂无观看记录</div>';
+        return;
+    }
+    
+    // 渲染历史记录
+    historyList.innerHTML = viewingHistory.map((item, index) => {
+        // 安全处理标题
+        const safeTitle = (item.title || '未知视频').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const safeSource = (item.sourceName || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        
+        // 格式化时间
+        const date = new Date(item.timestamp);
+        const formattedDate = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        
+        return `
+            <div class="bg-[#111] p-3 rounded-lg mb-3 border border-[#222] hover:border-[#444] transition-colors">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <h3 class="font-medium text-white mb-1">${safeTitle}</h3>
+                        <div class="flex items-center text-xs text-gray-400 mb-2">
+                            <span class="mr-2">${formattedDate}</span>
+                            ${safeSource ? `<span class="bg-[#222] px-1.5 py-0.5 rounded-full">${safeSource}</span>` : ''}
+                        </div>
+                        <div class="text-xs text-gray-500">第 ${(item.episodeIndex || 0) + 1} 集</div>
+                    </div>
+                    <div>
+                        <button onclick="continueWatching(${index})" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded transition-colors">
+                            继续观看
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// 继续观看历史记录中的视频
+function continueWatching(index) {
+    const viewingHistory = JSON.parse(localStorage.getItem('viewingHistory') || '[]');
+    if (index < 0 || index >= viewingHistory.length) return;
+    
+    const item = viewingHistory[index];
+    if (!item || !item.url) {
+        showToast('无法继续观看，视频链接无效', 'error');
+        return;
+    }
+    
+    // 如果有完整的剧集信息，更新全局变量
+    if (item.episodes && Array.isArray(item.episodes) && item.episodes.length > 0) {
+        currentEpisodes = [...item.episodes];
+    }
+    
+    // 构建播放页面URL
+    const sourceCode = ''; // 这里可能需要从历史记录中获取
+    const playerUrl = `player.html?url=${encodeURIComponent(item.url)}&title=${encodeURIComponent(item.title)}&index=${item.episodeIndex || 0}&source=${encodeURIComponent(item.sourceName || '')}`;
+    
+    // 在当前标签页中打开播放页面
+    window.location.href = playerUrl;
+}
+
+// 显示设置页面
+function showSettingsPage() {
+    // 隐藏其他页面
+    hideAllPages();
+    
+    // 显示设置页面
+    const settingsPage = document.getElementById('settingsPage');
+    if (settingsPage) settingsPage.classList.remove('hidden');
+    
+    // 更新导航栏状态
+    updateNavState('settings');
+}
+
+// 重置到首页
+function resetToHome() {
+    // 删除页面跳转检查
+    
+    // 隐藏所有页面
+    hideAllPages();
+    
+    // 清空搜索结果
+    clearSearchResults();
+    
+    // 显示主页
+    const homeArea = document.getElementById('homeArea');
+    if (homeArea) homeArea.classList.remove('hidden');
+    
+    // 检查是否启用豆瓣功能
+    const doubanEnabled = localStorage.getItem('doubanEnabled') === 'true';
+    if (doubanEnabled) {
+        const doubanArea = document.getElementById('doubanArea');
+        if (doubanArea) doubanArea.classList.remove('hidden');
+    }
+    
+    // 更新导航栏状态
+    updateNavState('home');
+}
+
+// 清空搜索结果
+function clearSearchResults() {
+    // 清空搜索结果
+    const results = document.getElementById('results');
+    if (results) results.innerHTML = '';
+    
+    // 清空搜索框
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    
+    // 重置结果计数
+    const searchResultsCount = document.getElementById('searchResultsCount');
+    if (searchResultsCount) searchResultsCount.textContent = '0';
+}
+
+// 更新导航栏状态
+function updateNavState(page) {
+    // 获取所有导航按钮
+    const navButtons = document.querySelectorAll('.bottom-nav-button');
+    if (!navButtons || navButtons.length === 0) return; // 如果没有导航按钮则直接返回
+    
+    // 移除所有active类
+    navButtons.forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // 添加active类到指定页面的导航按钮
+    let activeButton;
+    switch(page) {
+        case 'home':
+            activeButton = document.getElementById('nav-home');
+            break;
+        case 'search':
+            activeButton = document.getElementById('nav-search');
+            break;
+        case 'history':
+            activeButton = document.getElementById('nav-history');
+            break;
+        case 'settings':
+            activeButton = document.getElementById('nav-settings');
+            break;
+        default:
+            return;
+    }
+    
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+}
+
+// 隐藏所有页面
+function hideAllPages() {
+    // 获取所有页面元素
+    const pages = [
+        document.getElementById('homeArea'),
+        document.getElementById('searchPage'),
+        document.getElementById('historyPage'),
+        document.getElementById('settingsPage'),
+        document.getElementById('resultsArea'),
+        document.getElementById('doubanArea')
+    ];
+    
+    // 隐藏所有页面
+    pages.forEach(page => {
+        if (page) {
+            page.classList.add('hidden');
+        }
+    });
+}
+
+// 清空观看历史记录
+function clearViewingHistory() {
+    // 显示确认对话框
+    if (confirm('确定要清空所有观看历史记录吗？此操作不可恢复。')) {
+        // 清空历史记录
+        localStorage.removeItem('viewingHistory');
+        
+        // 重新渲染历史记录
+        renderViewingHistory();
+        
+        // 显示提示
+        showToast('已清空观看历史记录', 'success');
+    }
+}
+
+// 添加到观看历史
+function addToViewingHistory(videoInfo) {
+    // 获取现有历史记录
+    let viewingHistory = JSON.parse(localStorage.getItem('viewingHistory') || '[]');
+    
+    // 检查是否已存在相同标题的记录
+    const existingIndex = viewingHistory.findIndex(item => item.title === videoInfo.title);
+    
+    // 如果已存在，则更新记录
+    if (existingIndex !== -1) {
+        viewingHistory[existingIndex] = videoInfo;
+    } else {
+        // 否则，添加新记录到开头
+        viewingHistory.unshift(videoInfo);
+    }
+    
+    // 限制历史记录数量，最多保留100条
+    if (viewingHistory.length > 100) {
+        viewingHistory = viewingHistory.slice(0, 100);
+    }
+    
+    // 保存到localStorage
+    localStorage.setItem('viewingHistory', JSON.stringify(viewingHistory));
+}

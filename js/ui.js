@@ -1,16 +1,7 @@
 // UI相关函数
 function toggleSettings(e) {
-    // 密码保护校验
-    if (window.isPasswordProtected && window.isPasswordVerified) {
-        if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-            showPasswordModal && showPasswordModal();
-            return;
-        }
-    }
-    // 阻止事件冒泡，防止触发document的点击事件
-    e && e.stopPropagation();
-    const panel = document.getElementById('settingsPanel');
-    panel.classList.toggle('show');
+    // 直接显示设置页面
+    window.location.href = 'settings.html';
 }
 
 // 改进的Toast显示函数 - 支持队列显示多个Toast
@@ -186,46 +177,94 @@ function saveSearchHistory(query) {
     renderSearchHistory();
 }
 
-// 渲染最近搜索历史的增强版本
+// 渲染搜索历史
 function renderSearchHistory() {
-    const historyContainer = document.getElementById('recentSearches');
-    if (!historyContainer) return;
+    const searchHistoryList = document.getElementById('searchHistoryList');
+    const recentSearches = document.getElementById('recentSearches');
+    
+    // 如果两个容器都不存在，直接返回
+    if (!searchHistoryList && !recentSearches) return;
     
     const history = getSearchHistory();
     
+    // 如果没有历史记录
     if (history.length === 0) {
-        historyContainer.innerHTML = '';
+        if (searchHistoryList) {
+            searchHistoryList.innerHTML = `
+                <div class="text-center py-8">
+                    <p class="text-gray-500">暂无搜索记录</p>
+                </div>
+            `;
+        }
+        
+        if (recentSearches) {
+            recentSearches.innerHTML = '';
+        }
+        
         return;
     }
     
-    // 创建一个包含标题和清除按钮的行
-    historyContainer.innerHTML = `
-        <div class="flex justify-between items-center w-full mb-2">
-            <div class="text-gray-500">最近搜索:</div>
-            <button id="clearHistoryBtn" class="text-gray-500 hover:text-white transition-colors" 
-                    onclick="clearSearchHistory()" aria-label="清除搜索历史">
-                清除搜索历史
-            </button>
-        </div>
-    `;
+    // 渲染搜索历史页面的历史列表
+    if (searchHistoryList) {
+        searchHistoryList.innerHTML = `
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-white">搜索历史</h3>
+                <button onclick="clearSearchHistory()" class="text-sm text-gray-400 hover:text-white transition-colors">
+                    清空
+                </button>
+            </div>
+            <div class="space-y-2">
+                ${history.map(item => {
+                    // 获取查询文本 (兼容旧版本item.text和新版本item.query)
+                    const queryText = item.query || item.text || '';
+                    
+                    // 防止XSS
+                    const safeQuery = queryText
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;');
+                    
+                    return `
+                        <div class="flex items-center justify-between p-2 bg-[#111] rounded-lg hover:bg-[#222] transition-colors">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span class="text-sm text-gray-300 cursor-pointer" onclick="document.getElementById('searchInput').value='${safeQuery}'; search();">${safeQuery}</span>
+                            </div>
+                            <span class="text-xs text-gray-500">${formatTimestamp(item.timestamp)}</span>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
     
-    history.forEach(item => {
-        const tag = document.createElement('button');
-        tag.className = 'search-tag';
-        tag.textContent = item.text;
+    // 渲染搜索页面的最近搜索标签
+    if (recentSearches) {
+        recentSearches.innerHTML = '';
         
-        // 添加时间提示（如果有时间戳）
-        if (item.timestamp) {
-            const date = new Date(item.timestamp);
-            tag.title = `搜索于: ${date.toLocaleString()}`;
-        }
+        // 只显示最近5条
+        const recentHistory = history.slice(0, 5);
         
-        tag.onclick = function() {
-            document.getElementById('searchInput').value = item.text;
-            search();
-        };
-        historyContainer.appendChild(tag);
-    });
+        recentHistory.forEach(item => {
+            // 获取查询文本 (兼容旧版本item.text和新版本item.query)
+            const queryText = item.query || item.text || '';
+            
+            // 防止XSS
+            const safeQuery = queryText
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+            
+            const tag = document.createElement('div');
+            tag.className = 'recent-search-tag';
+            tag.innerHTML = `
+                <span onclick="document.getElementById('searchInput').value='${safeQuery}'; search();">${safeQuery}</span>
+            `;
+            recentSearches.appendChild(tag);
+        });
+    }
 }
 
 // 增加清除搜索历史功能
@@ -247,104 +286,6 @@ function clearSearchHistory() {
     }
 }
 
-// 修改toggleHistory函数以支持导航栏
-const originalToggleHistory = function(e) {
-    // 密码保护校验
-    if (window.isPasswordProtected && window.isPasswordVerified) {
-        if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-            showPasswordModal && showPasswordModal();
-            return;
-        }
-    }
-    if (e) e.stopPropagation();
-    
-    const panel = document.getElementById('historyPanel');
-    if (panel) {
-        panel.classList.toggle('show');
-        
-        // 如果打开了历史记录面板，则加载历史数据
-        if (panel.classList.contains('show')) {
-            loadViewingHistory();
-        }
-        
-        // 如果设置面板是打开的，则关闭它
-        const settingsPanel = document.getElementById('settingsPanel');
-        if (settingsPanel && settingsPanel.classList.contains('show')) {
-            settingsPanel.classList.remove('show');
-        }
-    }
-};
-
-// 确保历史和设置面板可以互相关闭
-function closeAllPanels() {
-    const historyPanel = document.getElementById('historyPanel');
-    const settingsPanel = document.getElementById('settingsPanel');
-    
-    if (historyPanel && historyPanel.classList.contains('show')) {
-        historyPanel.classList.remove('show');
-    }
-    
-    if (settingsPanel && settingsPanel.classList.contains('show')) {
-        settingsPanel.classList.remove('show');
-    }
-}
-
-// 覆盖toggleHistory函数
-toggleHistory = function(e) {
-    if (e) e.stopPropagation();
-    
-    // 先关闭设置面板
-    const settingsPanel = document.getElementById('settingsPanel');
-    if (settingsPanel && settingsPanel.classList.contains('show')) {
-        settingsPanel.classList.remove('show');
-    }
-    
-    // 原始历史面板切换逻辑
-    originalToggleHistory(e);
-    
-    // 更新导航栏状态
-    const historyPanel = document.getElementById('historyPanel');
-    if (historyPanel && historyPanel.classList.contains('show')) {
-        updateNavActiveState('nav-history');
-    } else {
-        updateNavActiveState('nav-home');
-    }
-};
-
-// 格式化时间戳为友好的日期时间格式
-function formatTimestamp(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
-    
-    // 小于1小时，显示"X分钟前"
-    if (diff < 3600000) {
-        const minutes = Math.floor(diff / 60000);
-        return minutes <= 0 ? '刚刚' : `${minutes}分钟前`;
-    }
-    
-    // 小于24小时，显示"X小时前"
-    if (diff < 86400000) {
-        const hours = Math.floor(diff / 3600000);
-        return `${hours}小时前`;
-    }
-    
-    // 小于7天，显示"X天前"
-    if (diff < 604800000) {
-        const days = Math.floor(diff / 86400000);
-        return `${days}天前`;
-    }
-    
-    // 其他情况，显示完整日期
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hour = date.getHours().toString().padStart(2, '0');
-    const minute = date.getMinutes().toString().padStart(2, '0');
-    
-    return `${year}-${month}-${day} ${hour}:${minute}`;
-}
-
 // 获取观看历史记录
 function getViewingHistory() {
     try {
@@ -356,7 +297,7 @@ function getViewingHistory() {
     }
 }
 
-// 加载观看历史并渲染
+// 加载观看历史到页面
 function loadViewingHistory() {
     const historyList = document.getElementById('historyList');
     if (!historyList) return;
@@ -372,9 +313,8 @@ function loadViewingHistory() {
     historyList.innerHTML = history.map(item => {
         // 防止XSS
         const safeTitle = item.title
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
+            ? item.title.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+            : '未知标题';
         
         const safeSource = item.sourceName ? 
             item.sourceName.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : 
@@ -401,11 +341,11 @@ function loadViewingHistory() {
         }
         
         // 为防止XSS，使用encodeURIComponent编码URL
-        const safeURL = encodeURIComponent(item.url);
+        const safeURL = item.url ? encodeURIComponent(item.url) : '';
         
         // 构建历史记录项HTML，添加删除按钮，需要放在position:relative的容器中
         return `
-            <div class="history-item cursor-pointer relative group" onclick="playFromHistory('${item.url}', '${safeTitle}', ${item.episodeIndex || 0}, ${item.playbackPosition || 0})">
+            <div class="history-item cursor-pointer relative group" onclick="playFromHistory('${item.url || ''}', '${safeTitle}', ${item.episodeIndex || 0}, ${item.playbackPosition || 0})">
                 <button onclick="event.stopPropagation(); deleteHistoryItem('${safeURL}')" 
                         class="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-400 hover:text-red-400 p-1 rounded-full hover:bg-gray-800 z-10"
                         title="删除记录">
@@ -421,7 +361,7 @@ function loadViewingHistory() {
                         <span class="history-source">${safeSource}</span>
                     </div>
                     ${progressHtml}
-                    <div class="history-time">${formatTimestamp(item.timestamp)}</div>
+                    <div class="history-time">${formatTimestamp(item.timestamp || Date.now())}</div>
                 </div>
             </div>
         `;
@@ -629,7 +569,10 @@ function clearViewingHistory() {
 // 底部导航栏Active状态管理
 function updateNavActiveState(activeNavId) {
     // 移除所有导航项的active类
-    document.querySelectorAll('.bottom-nav-button').forEach(btn => {
+    const navButtons = document.querySelectorAll('.bottom-nav-button');
+    if (!navButtons || navButtons.length === 0) return; // 如果没有导航按钮则直接返回
+    
+    navButtons.forEach(btn => {
         btn.classList.remove('active');
     });
     
@@ -642,112 +585,39 @@ function updateNavActiveState(activeNavId) {
     }
 }
 
-// 修改toggleSettings函数以支持导航栏
-const originalToggleSettings = function(e) {
-    // 密码保护校验
-    if (window.isPasswordProtected && window.isPasswordVerified) {
-        if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-            showPasswordModal && showPasswordModal();
-            return;
-        }
-    }
-    // 阻止事件冒泡，防止触发document的点击事件
-    e && e.stopPropagation();
-    const panel = document.getElementById('settingsPanel');
-    panel.classList.toggle('show');
-};
-
-// 覆盖toggleSettings函数
-toggleSettings = function(e) {
-    if (e) e.stopPropagation();
+// 格式化时间戳为友好的日期时间格式
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now - date;
     
-    // 先关闭历史面板
-    const historyPanel = document.getElementById('historyPanel');
-    if (historyPanel && historyPanel.classList.contains('show')) {
-        historyPanel.classList.remove('show');
+    // 小于1小时，显示"X分钟前"
+    if (diff < 3600000) {
+        const minutes = Math.floor(diff / 60000);
+        return minutes <= 0 ? '刚刚' : `${minutes}分钟前`;
     }
     
-    // 原始设置面板切换逻辑
-    originalToggleSettings(e);
+    // 小于24小时，显示"X小时前"
+    if (diff < 86400000) {
+        const hours = Math.floor(diff / 3600000);
+        return `${hours}小时前`;
+    }
     
-    // 更新导航栏状态
-    const settingsPanel = document.getElementById('settingsPanel');
-    if (settingsPanel && settingsPanel.classList.contains('show')) {
-        updateNavActiveState('nav-settings');
-    } else {
-        updateNavActiveState('nav-home');
+    // 小于7天，显示"X天前"
+    if (diff < 604800000) {
+        const days = Math.floor(diff / 86400000);
+        return `${days}天前`;
     }
-};
-
-// 点击外部关闭面板
-document.addEventListener('DOMContentLoaded', function() {
-    // 初始状态下为home高亮
-    updateNavActiveState('nav-home');
     
-    // 点击外部关闭设置面板
-    document.addEventListener('click', function(e) {
-        const settingsPanel = document.getElementById('settingsPanel');
-        const settingsButton = document.querySelector('button[onclick="toggleSettings(event)"]');
-        
-        if (settingsPanel && settingsButton && 
-            !settingsPanel.contains(e.target) && 
-            !settingsButton.contains(e.target) && 
-            settingsPanel.classList.contains('show')) {
-            settingsPanel.classList.remove('show');
-            updateNavActiveState('nav-home');
-        }
-        
-        // 点击外部关闭历史面板
-        const historyPanel = document.getElementById('historyPanel');
-        const historyButton = document.querySelector('button[onclick="toggleHistory(event)"]');
-        
-        if (historyPanel && historyButton && 
-            !historyPanel.contains(e.target) && 
-            !historyButton.contains(e.target) && 
-            historyPanel.classList.contains('show')) {
-            historyPanel.classList.remove('show');
-            updateNavActiveState('nav-home');
-        }
-    });
-});
-
-// 修改search函数以支持底部导航栏
-const originalSearch = window.search;
-window.search = function() {
-    if (originalSearch) {
-        const result = originalSearch.apply(this, arguments);
-        
-        // 如果搜索后显示了结果区域，更新导航栏状态
-        setTimeout(() => {
-            const resultsArea = document.getElementById('resultsArea');
-            if (resultsArea && !resultsArea.classList.contains('hidden')) {
-                updateNavActiveState('nav-search');
-            }
-        }, 100);
-        
-        return result;
-    }
-};
-
-// 修改resetToHome函数以支持底部导航栏
-const originalResetToHome = window.resetToHome;
-window.resetToHome = function() {
-    if (originalResetToHome) {
-        const result = originalResetToHome.apply(this, arguments);
-        updateNavActiveState('nav-home');
-        
-        // 关闭所有面板
-        closeAllPanels();
-        
-        return result;
-    }
-};
-
-// 确保文档加载后更新导航状态
-document.addEventListener('DOMContentLoaded', function() {
-    // 初始状态下为home高亮
-    updateNavActiveState('nav-home');
-});
+    // 其他情况，显示完整日期
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hour}:${minute}`;
+}
 
 // 清除本地存储缓存并刷新页面
 function clearLocalStorage() {
@@ -891,4 +761,126 @@ function showImportBox(fun) {
     fileInput.addEventListener('change', (e) => {
         fun(fileInput.files[0]);
     });
+}
+
+// 显示搜索页面
+function showSearchPage() {
+    // 隐藏其他页面
+    const homeArea = document.getElementById('homeArea');
+    if (homeArea) homeArea.classList.add('hidden');
+    
+    const historyPage = document.getElementById('historyPage');
+    if (historyPage) historyPage.classList.add('hidden');
+    
+    const settingsPage = document.getElementById('settingsPage');
+    if (settingsPage) settingsPage.classList.add('hidden');
+    
+    const doubanArea = document.getElementById('doubanArea');
+    if (doubanArea) doubanArea.classList.add('hidden');
+    
+    const resultsArea = document.getElementById('resultsArea');
+    if (resultsArea) resultsArea.classList.add('hidden');
+    
+    // 显示搜索页面
+    const searchPage = document.getElementById('searchPage');
+    if (searchPage) searchPage.classList.remove('hidden');
+    
+    // 更新导航状态
+    updateNavActiveState('nav-search');
+    
+    // 加载最近搜索记录
+    renderSearchHistory();
+    
+    // 聚焦搜索框
+    setTimeout(() => {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.focus();
+    }, 100);
+}
+
+// 显示主页
+function showHomePage() {
+    // 隐藏其他页面
+    const searchPage = document.getElementById('searchPage');
+    if (searchPage) searchPage.classList.add('hidden');
+    
+    const historyPage = document.getElementById('historyPage');
+    if (historyPage) historyPage.classList.add('hidden');
+    
+    const settingsPage = document.getElementById('settingsPage');
+    if (settingsPage) settingsPage.classList.add('hidden');
+    
+    const resultsArea = document.getElementById('resultsArea');
+    if (resultsArea) resultsArea.classList.add('hidden');
+    
+    // 显示主页
+    const homeArea = document.getElementById('homeArea');
+    if (homeArea) homeArea.classList.remove('hidden');
+    
+    // 如果豆瓣推荐开启，则显示豆瓣区域
+    const doubanEnabled = localStorage.getItem('doubanEnabled') === 'true';
+    const doubanArea = document.getElementById('doubanArea');
+    if (doubanEnabled && doubanArea) {
+        doubanArea.classList.remove('hidden');
+    } else if (doubanArea) {
+        doubanArea.classList.add('hidden');
+    }
+    
+    // 更新导航状态
+    updateNavActiveState('nav-home');
+}
+
+// 显示历史记录页面
+function showHistoryPage() {
+    // 隐藏其他页面
+    const homeArea = document.getElementById('homeArea');
+    if (homeArea) homeArea.classList.add('hidden');
+    
+    const searchPage = document.getElementById('searchPage');
+    if (searchPage) searchPage.classList.add('hidden');
+    
+    const settingsPage = document.getElementById('settingsPage');
+    if (settingsPage) settingsPage.classList.add('hidden');
+    
+    const doubanArea = document.getElementById('doubanArea');
+    if (doubanArea) doubanArea.classList.add('hidden');
+    
+    const resultsArea = document.getElementById('resultsArea');
+    if (resultsArea) resultsArea.classList.add('hidden');
+    
+    // 显示历史记录页面
+    const historyPage = document.getElementById('historyPage');
+    if (historyPage) historyPage.classList.remove('hidden');
+    
+    // 更新导航状态
+    updateNavActiveState('nav-history');
+    
+    // 加载观看历史
+    loadViewingHistory();
+}
+
+// 显示设置页面
+function showSettingsPage() {
+    // 隐藏其他页面
+    const homeArea = document.getElementById('homeArea');
+    if (homeArea) homeArea.classList.add('hidden');
+    
+    const searchPage = document.getElementById('searchPage');
+    if (searchPage) searchPage.classList.add('hidden');
+    
+    const historyPage = document.getElementById('historyPage');
+    if (historyPage) historyPage.classList.add('hidden');
+    
+    const doubanArea = document.getElementById('doubanArea');
+    if (doubanArea) doubanArea.classList.add('hidden');
+    
+    const resultsArea = document.getElementById('resultsArea');
+    if (resultsArea) resultsArea.classList.add('hidden');
+    
+    // 显示设置页面
+    const settingsPage = document.getElementById('settingsPage');
+    if (settingsPage) settingsPage.classList.remove('hidden');
+    
+    // 更新导航状态
+    updateNavActiveState('nav-settings');
 }

@@ -1,5 +1,10 @@
 // 豆瓣热门电影电视剧推荐功能
 
+// 为了兼容app.js中的调用，添加loadDoubanData函数作为initDouban的别名
+function loadDoubanData() {
+    return initDouban();
+}
+
 // 豆瓣标签列表 - 修改为默认标签
 let defaultMovieTags = ['热门', '最新', '经典', '豆瓣高分', '冷门佳片', '华语', '欧美', '韩国', '日本', '动作', '喜剧', '爱情', '科幻', '悬疑', '恐怖', '治愈'];
 let defaultTvTags = ['热门', '美剧', '英剧', '韩剧', '日剧', '国产剧', '港剧', '日本动画', '综艺', '纪录片'];

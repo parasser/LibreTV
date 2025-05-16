@@ -170,11 +170,16 @@ button, .card-hover {
     font-size: 0.875rem;
     border: 1px solid var(--border-color);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    transition: all 0.2s ease;
+    overflow: hidden;
 }
 
 .search-tag:hover {
     background: linear-gradient(135deg, var(--card-gradient-end), var(--card-gradient-start));
     border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
 .footer {
@@ -704,10 +709,6 @@ body {
     object-fit: cover;
 }
 
-.history-info {
-    padding: 10px;
-}
-
 .history-time {
     color: #888;
     font-size: 0.8rem;
@@ -936,4 +937,73 @@ body {
     .footer {
         padding-bottom: 5rem;
     }
+}
+
+/* 历史记录页面样式 */
+#historyPage {
+    padding-bottom: 80px;
+}
+
+#historyPage .history-item {
+    background: #1a1a1a;
+    border-radius: 8px;
+    border: 1px solid #333;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    padding: 12px 16px;
+    position: relative;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+#historyPage .history-item:hover {
+    transform: translateY(-2px);
+    border-color: #444;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* 设置页面样式 */
+#settingsPage {
+    padding-bottom: 80px;
+}
+
+/* 保留原有的历史记录项样式 */
+.history-info {
+    padding: 0;
+    min-height: 70px;
+}
+
+.history-title {
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-meta {
+    color: #bbb;
+    font-size: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 1px;
+}
+
+.history-episode {
+    color: #3b82f6;
+}
+
+.history-source {
+    color: #10b981;
+}
+
+.history-time {
+    color: #888;
+    font-size: 0.7rem;
+    margin-top: 1px;
+}
+
+.history-separator {
+    color: #666;
 }
