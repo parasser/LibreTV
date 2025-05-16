@@ -1,5 +1,21 @@
 // 全局常量配置
-const PROXY_URL = '/proxy/';    // 适用于 Cloudflare, Netlify (带重写), Vercel (带重写)
+// 代理URL配置 - 根据您的部署环境选择合适的代理
+
+// 选项1: 使用相对路径（适用于已配置代理的服务器环境）
+// const PROXY_URL = '/proxy/';    // 适用于 Cloudflare, Netlify (带重写), Vercel (带重写)
+
+// 选项2: 使用公共CORS代理（默认选项，通常较为稳定）
+const PROXY_URL = 'https://corsproxy.io/?';
+
+// 选项3: 使用另一个公共CORS代理
+// const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+
+// 选项4: 使用AllOrigins代理
+// const PROXY_URL = 'https://api.allorigins.win/raw?url=';
+
+// 选项5: 不使用代理（直接请求，可能会有CORS问题）
+// const PROXY_URL = '';
+
 // const HOPLAYER_URL = 'https://hoplayer.com/index.html';
 const SEARCH_HISTORY_KEY = 'videoSearchHistory';
 const MAX_HISTORY_ITEMS = 5;
